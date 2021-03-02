@@ -24,8 +24,7 @@ class BasicJDBCTest {
     @Test
     void testPlainJDBC() throws SQLException {
 
-        final String str = "jdbc:postgresql://%s:%s/%s?user=%s&password=%s&ssl=false";
-        final String url = String.format(str, host, port, database, user, password);
+        final String url = getConnectionString();
 
         final String stmt = "SELECT id, owner_id, label, email_address FROM public.email_address;";
         log.info("-----------------------------------------------------");
@@ -46,6 +45,15 @@ class BasicJDBCTest {
         }
         log.info("Ending");
         log.info("-----------------------------------------------------");
+    }
+
+    /**
+     * @return An instantiated connection string.
+     */
+    String getConnectionString() {
+        final String str = "jdbc:postgresql://%s:%s/%s?user=%s&password=%s&ssl=false";
+        final String url = String.format(str, host, port, database, user, password);
+        return url;
     }
 
     @Value("${db.host}")
