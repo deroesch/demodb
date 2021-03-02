@@ -108,6 +108,8 @@ class BasicJDBCTest {
         String stmt = "empty";
         final Resource resource = context.getResource(String.format("classpath:queries/getStreetAddresses.sql"));
         try (BufferedInputStream bis = new BufferedInputStream(resource.getInputStream())) {
+
+            // Read the whole query from the file.
             stmt = new String(bis.readAllBytes());
         }
 
