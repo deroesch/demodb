@@ -27,7 +27,7 @@ class BasicJDBCTest {
         final String str = "jdbc:postgresql://%s:%s/%s?user=%s&password=%s&ssl=false";
         final String url = String.format(str, host, port, database, user, password);
 
-        final String stmt = "SELECT id, owner_id, label, address FROM public.emails;";
+        final String stmt = "SELECT id, owner_id, label, email_address FROM public.email_address;";
         log.info("-----------------------------------------------------");
         log.info("Starting");
         try (Connection conn = DriverManager.getConnection(url); PreparedStatement p = conn.prepareStatement(stmt)) {
