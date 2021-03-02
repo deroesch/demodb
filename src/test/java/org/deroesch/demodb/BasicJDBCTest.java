@@ -59,7 +59,7 @@ class BasicJDBCTest {
     }
 
     /**
-     * Test a more complex query read from a file.
+     * Test a more complex query whose text is read from a file.
      * 
      * @throws SQLException
      * @throws FileNotFoundException
@@ -110,7 +110,7 @@ class BasicJDBCTest {
     private ApplicationContext context;
 
     //
-    // The @Value elements below come from application.properties file
+    // The @Value elements below come from the application.properties file
     //
 
     @Value("${db.host}")
