@@ -6,8 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class DemodbApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void coverageHelper() {
+        new DemodbApplication();
+
+        final String[] args = {};
+        DemodbApplication.main(args);
+    }
 
 }
