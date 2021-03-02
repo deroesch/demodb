@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,10 +31,32 @@ class BasicJDBCTest {
     @Autowired
     private ApplicationContext context;
 
+    @Value("${db.host}")
+    private String host;
+
+    @Value("${db.port}")
+    private String port;
+
+    @Value("${db.database}")
+    private String database;
+
+    @Value("${db.user}")
+    private String user;
+
+    @Value("${db.password}")
+    private String password;
+
+    // Our JDBC connection string
+    private String url;
+
+    @BeforeEach
+    void init() {
+        final String str = "jdbc:postgresql://%s:%s/%s?user=%s&password=%s&ssl=false";
+        url = String.format(str, host, port, database, user, password);
+    }
+
     @Test
     void testPlainJDBC() throws SQLException {
-
-        final String url = getConnectionString();
 
         final String stmt = "SELECT id, owner_id, label, email_address FROM public.email_address;";
         log.info("-----------------------------------------------------");
@@ -60,12 +83,10 @@ class BasicJDBCTest {
     void testBigQuery() throws SQLException, FileNotFoundException, IOException {
 
         String stmt = "empty";
-        Resource resource = context.getResource(String.format("classpath:queries/getStreetAddresses.sql"));
+        final Resource resource = context.getResource(String.format("classpath:queries/getStreetAddresses.sql"));
         try (BufferedInputStream bis = new BufferedInputStream(resource.getInputStream())) {
             stmt = new String(bis.readAllBytes());
         }
-
-        final String url = getConnectionString();
 
         log.info("-----------------------------------------------------");
         log.info("Starting");
@@ -95,29 +116,5 @@ class BasicJDBCTest {
         log.info("-----------------------------------------------------");
 
     }
-
-    /**
-     * @return An instantiated connection string.
-     */
-    String getConnectionString() {
-        final String str = "jdbc:postgresql://%s:%s/%s?user=%s&password=%s&ssl=false";
-        final String url = String.format(str, host, port, database, user, password);
-        return url;
-    }
-
-    @Value("${db.host}")
-    String host;
-
-    @Value("${db.port}")
-    String port;
-
-    @Value("${db.database}")
-    String database;
-
-    @Value("${db.user}")
-    String user;
-
-    @Value("${db.password}")
-    String password;
 
 }
