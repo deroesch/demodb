@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.deroesch.demodb;
 
 import java.sql.Connection;
@@ -17,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * Basic JDBC test in Spring
  */
 @Slf4j
 @SpringBootTest
