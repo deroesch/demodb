@@ -31,6 +31,10 @@ class BasicJDBCTest {
     @Autowired
     private ApplicationContext context;
 
+    //
+    // The @Value elements below come from application.properties
+    //
+
     @Value("${db.host}")
     private String host;
 
@@ -51,10 +55,22 @@ class BasicJDBCTest {
 
     @BeforeEach
     void init() {
-        final String str = "jdbc:postgresql://%s:%s/%s?user=%s&password=%s&ssl=false";
-        url = String.format(str, host, port, database, user, password);
+
+        //
+        // Have to do this initialization at the instance level or @Value fetches won't
+        // work.
+        //
+        if (null == url) {
+            final String str = "jdbc:postgresql://%s:%s/%s?user=%s&password=%s&ssl=false";
+            url = String.format(str, host, port, database, user, password);
+        }
     }
 
+    /**
+     * Test a simple query.
+     * 
+     * @throws SQLException
+     */
     @Test
     void testPlainJDBC() throws SQLException {
 
@@ -79,6 +95,13 @@ class BasicJDBCTest {
         log.info("-----------------------------------------------------");
     }
 
+    /**
+     * Test a more complex query read from a file.
+     * 
+     * @throws SQLException
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     @Test
     void testBigQuery() throws SQLException, FileNotFoundException, IOException {
 
