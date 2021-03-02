@@ -1,5 +1,8 @@
 package org.deroesch.demodb;
 
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,9 +10,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @Configuration
 class BasicJDBCTest {
+
+    @Autowired
+    private ApplicationContext context;
 
     @Test
     void testPlainJDBC() throws SQLException {
@@ -45,6 +54,46 @@ class BasicJDBCTest {
         }
         log.info("Ending");
         log.info("-----------------------------------------------------");
+    }
+
+    @Test
+    void testBigQuery() throws SQLException, FileNotFoundException, IOException {
+
+        String stmt = "empty";
+        Resource resource = context.getResource(String.format("classpath:queries/getStreetAddresses.sql"));
+        try (BufferedInputStream bis = new BufferedInputStream(resource.getInputStream())) {
+            stmt = new String(bis.readAllBytes());
+        }
+
+        final String url = getConnectionString();
+
+        log.info("-----------------------------------------------------");
+        log.info("Starting");
+        try (Connection conn = DriverManager.getConnection(url); PreparedStatement p = conn.prepareStatement(stmt)) {
+            log.info("Got connection");
+
+            final ResultSet results = p.executeQuery();
+
+            while (results.next()) {
+                int i = 1;
+                final String lastName = results.getString(i++);
+                final String firstName = results.getString(i++);
+                final String middleName = results.getString(i++);
+                final String label = results.getString(i++);
+                final String addr1 = results.getString(i++);
+                final String addr2 = results.getString(i++);
+                final String city = results.getString(i++);
+                final String state = results.getString(i++);
+                final int zip_code = results.getInt(i++);
+
+                final String msg = String.format("%s %s %s %s %s %s %s %s %s", lastName, firstName, middleName, label,
+                        addr1, addr2, city, state, zip_code);
+                log.info(msg);
+            }
+        }
+        log.info("Ending");
+        log.info("-----------------------------------------------------");
+
     }
 
     /**
