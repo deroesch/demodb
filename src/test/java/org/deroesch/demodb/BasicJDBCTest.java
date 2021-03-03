@@ -88,16 +88,16 @@ class BasicJDBCTest {
                 int i = 1;
                 final String lastName = rs.getString(i++);
                 final String firstName = rs.getString(i++);
-                final String middleName = rs.getString(i++);
                 final String label = rs.getString(i++);
                 final String addr1 = rs.getString(i++);
                 final String addr2 = rs.getString(i++);
                 final String city = rs.getString(i++);
                 final String state = rs.getString(i++);
                 final int zip_code = rs.getInt(i++);
+                final String w3w = rs.getString(i++);
 
-                final String msg = String.format("%s %s %s %s %s %s %s %s %s", lastName, firstName, middleName, label,
-                        addr1, addr2, city, state, zip_code);
+                final String msg = String.format("%s %s %s %s %s %s %s %s %s", lastName, firstName, label, addr1, addr2,
+                        city, state, zip_code, w3w);
                 log.info(msg);
             }
         }
