@@ -30,7 +30,7 @@ class BasicJDBCTest {
 
     /**
      * Test a simple query.
-     * 
+     *
      * @throws SQLException
      */
     @Test
@@ -38,7 +38,9 @@ class BasicJDBCTest {
 
         log.info("-----------------------------------------------------");
         log.info("Starting");
+
         final String stmt = "SELECT id, owner_id, label, email_address FROM public.email_address;";
+
         try (Connection conn = DriverManager.getConnection(url); PreparedStatement ps = conn.prepareStatement(stmt)) {
             log.info("Got connection");
 
@@ -60,7 +62,7 @@ class BasicJDBCTest {
 
     /**
      * Test a more complex query whose text is read from a file.
-     * 
+     *
      * @throws SQLException
      * @throws FileNotFoundException
      * @throws IOException
@@ -71,13 +73,7 @@ class BasicJDBCTest {
         log.info("-----------------------------------------------------");
         log.info("Starting");
 
-        String stmt = "empty";
-        final Resource resource = context.getResource(String.format("classpath:queries/getStreetAddresses.sql"));
-        try (BufferedInputStream bis = new BufferedInputStream(resource.getInputStream())) {
-
-            // Read the whole query from the file.
-            stmt = new String(bis.readAllBytes());
-        }
+        final String stmt = getQueryFromFile("queries/getStreetAddresses.sql");
 
         try (Connection conn = DriverManager.getConnection(url); PreparedStatement ps = conn.prepareStatement(stmt)) {
             log.info("Got connection");
@@ -104,6 +100,19 @@ class BasicJDBCTest {
         log.info("Ending");
         log.info("-----------------------------------------------------");
 
+    }
+
+    /**
+     * Fetch query text from a file.
+     * 
+     * @return The SQL query in the file
+     * @throws IOException
+     */
+    String getQueryFromFile(final String filePath) throws IOException {
+        final Resource resource = context.getResource(String.format("classpath:" + filePath));
+        try (BufferedInputStream bis = new BufferedInputStream(resource.getInputStream())) {
+            return new String(bis.readAllBytes());
+        }
     }
 
     @Autowired
